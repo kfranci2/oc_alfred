@@ -1,0 +1,17 @@
+# Secrets and tokens
+*token*
+*secret*
+*key*.json
+auth-profiles.json
+
+# Sensitive config
+openclaw.json
+
+# Large/temp files
+*.log
+*.tmp
+node_modules/
+.DS_Store
+
+# Session transcripts (optional - uncomment if you want to exclude)
+# *.jsonl
