@@ -12,16 +12,45 @@ This folder is home. Treat it that way.
 
 If `BOOTSTRAP.md` exists, that's your birth certificate. Follow it, figure out who you are, then delete it. You won't need it again.
 
-## Every Session
+## Context Management: Lazy Loading
 
-Before doing anything else:
+**Session startup is lightweight.** Load only what's needed, keep everything else accessible on demand.
 
-1. Read `SOUL.md` — this is who you are
-2. Read `USER.md` — this is who you're helping
-3. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
-4. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+### 🚀 Load on Every Session Start (Only These)
+
+1. **SOUL.md** — who you are
+2. **USER.md** — who Kevin is
+3. **IDENTITY.md** — identity specifics
+4. **memory/YYYY-MM-DD.md** — today's notes (if they exist)
 
 Don't ask permission. Just do it.
+
+### 🔍 Retrieve on Demand (No Pre-Loading)
+
+Everything else stays on disk and loads only when needed:
+
+- **MEMORY.md** — search via `memory_search` when task requires long-term context
+- **Historical daily notes** — fetch specific dates via `memory_search` + `memory_get` only
+- **Tool outputs, old conversations** — retrieve only if the current task actually needs them
+
+Think: **search engine, not encyclopaedia**. If Kevin asks about something from last week, search for the relevant piece instead of pre-loading all history.
+
+### 💾 Session End: Save Daily Summary
+
+Before the session ends, save a brief entry to `memory/YYYY-MM-DD.md`:
+
+- What we covered
+- Key decisions made
+- Open items for next session
+
+This keeps daily notes useful for future sessions without bloat.
+
+### Why This Matters
+
+✅ **Saves tokens** — critical for local Gemma model (8K context window)
+✅ **Faster startup** — no loading delay, sessions start instantly
+✅ **Everything still accessible** — just retrieved on demand
+✅ **Scales** — as memory grows, performance doesn't degrade
 
 ## Memory
 
@@ -34,8 +63,10 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 
 ### 🧠 MEMORY.md - Your Long-Term Memory
 
-- **ONLY load in main session** (direct chats with your human)
-- **DO NOT load in shared contexts** (Discord, group chats, sessions with other people)
+- **DO NOT auto-load at startup** — stays on disk to save tokens
+- **Search on demand** — use `memory_search` when task requires long-term context
+- **ONLY access in main session** (direct chats with Kevin)
+- **DO NOT access in shared contexts** (Discord, group chats, sessions with other people)
 - This is for **security** — contains personal context that shouldn't leak to strangers
 - You can **read, edit, and update** MEMORY.md freely in main sessions
 - Write significant events, thoughts, decisions, opinions, lessons learned
@@ -204,14 +235,34 @@ You are free to edit `HEARTBEAT.md` with a short checklist or reminders. Keep it
 
 Periodically (every few days), use a heartbeat to:
 
-1. Read through recent `memory/YYYY-MM-DD.md` files
+1. Search recent `memory/YYYY-MM-DD.md` files via `memory_search`
 2. Identify significant events, lessons, or insights worth keeping long-term
-3. Update `MEMORY.md` with distilled learnings
-4. Remove outdated info from MEMORY.md that's no longer relevant
+3. Fetch relevant snippets via `memory_get`
+4. Update `MEMORY.md` with distilled learnings
+5. Remove outdated info from MEMORY.md that's no longer relevant
 
-Think of it like a human reviewing their journal and updating their mental model. Daily files are raw notes; MEMORY.md is curated wisdom.
+Think of it like a human reviewing their journal and updating their mental model. Daily files are raw notes; MEMORY.md is curated wisdom. This keeps the long-term memory fresh without loading everything on startup.
 
 The goal: Be helpful without being annoying. Check in a few times a day, do useful background work, but respect quiet time.
+
+## Token Efficiency & Local Models
+
+With the local Gemma 2B model (8K context window), every token counts. The lazy-loading context pattern above is **critical** for reliability:
+
+- **Gemma has 8K tokens max** — pre-loading old conversations + archives wastes ~2-3K tokens
+- **Lazy load = more room** for actual task context and tool outputs
+- **Fast startup** — no lag waiting for 50 old memory files to parse
+
+Think of it as: **Gemma gets the essentials, nothing more. Everything else loads on demand.**
+
+This approach works great for:
+- Daily commit messages (cron jobs, git automation)
+- Routine checks (heartbeats, periodic tasks)
+- Focused conversations (where you ask specific questions)
+
+Falls back to Claude when:
+- Complex analysis needed (big diffs, multi-file logic)
+- Judgment calls required ("should I deploy this?")
 
 ## Make It Yours
 

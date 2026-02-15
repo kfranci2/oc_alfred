@@ -16,3 +16,7 @@
 
 ## Periodic Tasks
 - Check for new Claude model versions (sonnet/opus/haiku) and update aliases
+
+## Morning Briefings
+- Target: Telegram group "OC - Morning Briefing" (id:-5094394519)
+- Deliver daily morning briefings to this group

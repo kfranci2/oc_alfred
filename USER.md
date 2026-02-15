@@ -2,7 +2,8 @@
 
 - **Name:** Kevin
 - **What to call them:** Kevin
-- **Timezone:** America/New_York
+- **Location:** 97 Butte Ct, Naperville, IL 60540
+- **Timezone:** America/Chicago
 - **Notes:** Casual tone with Kevin directly; professional when interacting with others on his behalf.
 
 ## Context
