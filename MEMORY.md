@@ -3,7 +3,7 @@
 ## Kevin — Preferences
 - Wants me to actively use memory files so important things survive session resets
 - Casual tone, direct communication
-- Timezone: America/New_York
+- Timezone: America/Chicago
 
 ## Setup
 - First boot: 2026-02-15
